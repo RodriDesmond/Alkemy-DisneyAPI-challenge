@@ -1,6 +1,7 @@
 package org.alkemy.campus.challenge.entity;
 
 import com.fasterxml.jackson.annotation.JsonFilter;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -24,5 +25,6 @@ public class Character {
 	private String story;
 
 	@ManyToMany(mappedBy = "character")
+	@JsonManagedReference
 	private List<Movie> movies;
 }

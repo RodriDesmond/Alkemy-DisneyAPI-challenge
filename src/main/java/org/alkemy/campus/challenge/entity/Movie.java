@@ -1,5 +1,6 @@
 package org.alkemy.campus.challenge.entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonFilter;
 import lombok.Getter;
 import lombok.Setter;
@@ -39,6 +40,7 @@ public class Movie {
 			CascadeType.PERSIST,
 			CascadeType.MERGE
 	})
+	@JsonBackReference
 	private List<Character> character;
 
 	@ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
