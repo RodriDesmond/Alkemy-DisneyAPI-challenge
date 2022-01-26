@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.ser.impl.SimpleBeanPropertyFilter;
 import com.fasterxml.jackson.databind.ser.impl.SimpleFilterProvider;
 import org.alkemy.campus.challenge.dto.CharacterToMovieDto;
 import org.alkemy.campus.challenge.entity.Character;
+import org.alkemy.campus.challenge.exception.CharacterNotFoundException;
 import org.alkemy.campus.challenge.repository.CharacterRepository;
 import org.alkemy.campus.challenge.repository.MovieRepository;
 import org.alkemy.campus.challenge.services.CharacterService;
@@ -45,7 +46,9 @@ public class CharacterController {
 			return new ResponseEntity<>(characterRepository.findByAge(age), HttpStatus.OK);
 		} else if (Objects.nonNull(name)) {
 			return new ResponseEntity<>(characterRepository.findByName(name), HttpStatus.OK);
-		}
+		} else if (Objects.nonNull(idMovie)) {
+		return new ResponseEntity<>(characterRepository.findByMovieId(idMovie), HttpStatus.OK);
+	}
 		return new ResponseEntity<>(mapping, HttpStatus.OK);
 	}
 
@@ -56,7 +59,8 @@ public class CharacterController {
 
 	@GetMapping("{id}")
 	public ResponseEntity<?> getCharacterDetails(@PathVariable Long id) {
-		return new ResponseEntity<>(characterRepository.findById(id),HttpStatus.OK);
+		return new ResponseEntity<>(characterRepository.findById(id)
+				.orElseThrow(() -> new CharacterNotFoundException(id)), HttpStatus.OK);
 	}
 
 	@PutMapping("{id}")

@@ -1,7 +1,8 @@
 package org.alkemy.campus.challenge.entity;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonFilter;
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -19,6 +20,9 @@ import java.util.Set;
 @Setter
 @Table(name = "movie")
 @JsonFilter("MovieDetails")
+@JsonIdentityInfo(
+		generator = ObjectIdGenerators.PropertyGenerator.class,
+		property = "id")
 public class Movie {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -40,16 +44,16 @@ public class Movie {
 			CascadeType.PERSIST,
 			CascadeType.MERGE
 	})
-	@JsonBackReference
 	private List<Character> character;
 
-	@ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+
+	@ManyToMany(fetch = FetchType.LAZY)
 	@JoinTable(	name = "movie_genres",
 			joinColumns = @JoinColumn(name = "movie_id"),
 			inverseJoinColumns = @JoinColumn(name = "genre_id"))
 	private Set<Genre> genres = new HashSet<>();
 
-	public void addCharacter(Character character){
+		public void addCharacter(Character character){
 		if(this.character == null){
 			this.character = new ArrayList<>();
 		}
