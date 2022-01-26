@@ -14,8 +14,13 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.json.MappingJacksonValue;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
-import javax.validation.Valid;
+
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.List;
 import java.util.Objects;
 
@@ -51,10 +56,24 @@ public class CharacterController {
 	}
 		return new ResponseEntity<>(mapping, HttpStatus.OK);
 	}
+	@PostMapping()
+	public Character save(@RequestParam("file") MultipartFile image, @ModelAttribute Character character){
 
-	@PostMapping
-	public ResponseEntity<?> addCharacter(@Valid @RequestBody Character character) {
-		return new ResponseEntity<>(characterRepository.save(character), HttpStatus.CREATED);
+		if(!image.isEmpty()){
+
+			Path imagesPath = Paths.get("src//main//resources//static//images//characters");
+			String absolutPath = imagesPath.toFile().getAbsolutePath();
+			try {
+				byte[] bytes = image.getBytes();
+				Path route = Paths.get(absolutPath + image.getOriginalFilename());
+				Files.write(route, bytes);
+				character.setImg(image.getOriginalFilename());
+
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
+		return characterRepository.save(character);
 	}
 
 	@GetMapping("{id}")

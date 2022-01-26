@@ -11,7 +11,11 @@ import java.util.List;
 @Getter
 @Setter
 @RequiredArgsConstructor
-@Table(name = "genre")
+@Table(name = "genre",
+		uniqueConstraints = {
+				@UniqueConstraint(columnNames = "name"),
+				@UniqueConstraint(columnNames = "img")
+		})
 public class Genre {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -19,6 +23,7 @@ public class Genre {
 	private Integer id;
 
 	private String img;
+
 	@Enumerated(EnumType.STRING)
 	private EGenres name;
 

@@ -1,15 +1,15 @@
 package org.alkemy.campus.challenge.entity;
 
 public enum EGenres {
-	Action,
-	Adventure,
-	Animated,
-	Christmas,
-	Comedy,
-	Documentary,
-	Drama,
-	Fantasy,
-	History,
-	Musical,
-	Mystery
+	ACTION,
+	ADVENTURE,
+	ANIMATED,
+	CHRISTMAS,
+	COMEDY,
+	DOCUMENTARY,
+	DRAMA,
+	FANTASY,
+	HISTORY,
+	MUSICAL,
+	MYSTERY
 }

@@ -3,10 +3,7 @@ package org.alkemy.campus.challenge.controller;
 import com.fasterxml.jackson.databind.ser.FilterProvider;
 import com.fasterxml.jackson.databind.ser.impl.SimpleBeanPropertyFilter;
 import com.fasterxml.jackson.databind.ser.impl.SimpleFilterProvider;
-import org.alkemy.campus.challenge.entity.Character;
 import org.alkemy.campus.challenge.entity.Movie;
-import org.alkemy.campus.challenge.exception.CharacterNotFoundException;
-import org.alkemy.campus.challenge.exception.GenreNotFoundException;
 import org.alkemy.campus.challenge.exception.MovieNotFoundException;
 import org.alkemy.campus.challenge.repository.MovieRepository;
 import org.alkemy.campus.challenge.services.MovieService;
@@ -15,14 +12,20 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.json.MappingJacksonValue;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
-import javax.validation.Valid;
+
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.List;
 import java.util.Objects;
 
 @RestController
 @RequestMapping("/movies")
 public class MovieController {
+
 	@Autowired
 	private MovieRepository movieRepository;
 	@Autowired
@@ -59,11 +62,25 @@ public class MovieController {
 				.orElseThrow(() -> new MovieNotFoundException(id)),HttpStatus.OK);
 	}
 
-	@PostMapping
-	public ResponseEntity<?> addMovie(@Valid @RequestBody Movie movie) {
-		return new ResponseEntity<>(movieRepository.save(movie), HttpStatus.CREATED);
-	}
+	@PostMapping()
+	public Movie save(@RequestParam("movieFile") MultipartFile image, @ModelAttribute Movie movie){
 
+		if(!image.isEmpty()){
+
+			Path imagesPath = Paths.get("src//main//resources//static//images//movies");
+			String absolutPath = imagesPath.toFile().getAbsolutePath();
+			try {
+				byte[] bytes = image.getBytes();
+				Path route = Paths.get(absolutPath + image.getOriginalFilename());
+				Files.write(route, bytes);
+				movie.setImg(image.getOriginalFilename());
+
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
+		return movieRepository.save(movie);
+	}
 	@DeleteMapping("{id}")
 	@ResponseStatus( HttpStatus.NO_CONTENT)
 	public void removeCharacter(@PathVariable Long id){

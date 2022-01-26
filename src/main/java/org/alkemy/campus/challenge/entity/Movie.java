@@ -1,19 +1,13 @@
 package org.alkemy.campus.challenge.entity;
 
-import com.fasterxml.jackson.annotation.JsonFilter;
-import com.fasterxml.jackson.annotation.JsonIdentityInfo;
-import com.fasterxml.jackson.annotation.ObjectIdGenerators;
+import com.fasterxml.jackson.annotation.*;
 import lombok.Getter;
 import lombok.Setter;
 
 import javax.persistence.*;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
-import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 @Entity
 @Getter
@@ -32,22 +26,28 @@ public class Movie {
 	private String title;
 	@Enumerated(EnumType.STRING)
 	private EType type;
-	private LocalDate fechaDeCreacion;
+
+	@JsonFormat(pattern="yyyy-MM-dd")
+	private Date creationDate;
+
 	@Min(value = 1, message = "Rating must be greater or equal to 1")
 	@Max(value = 5, message = "Rating must be less or equal to 5")
 	private Integer rating;
 
 	@JoinTable(name = "character_movie",
-			joinColumns = @JoinColumn(name = "character_id", nullable = false),
-			inverseJoinColumns = @JoinColumn(name = "movie_id", nullable = false))
-	@ManyToMany(cascade ={
+			joinColumns = @JoinColumn(name = "id_movie", nullable = false),
+			inverseJoinColumns = @JoinColumn(name = "id_character", nullable = false))
+	@ManyToMany(fetch = FetchType.LAZY, cascade ={
 			CascadeType.PERSIST,
 			CascadeType.MERGE
 	})
-	private List<Character> character;
+	private List<Character> character = new ArrayList<>();;
 
 
-	@ManyToMany(fetch = FetchType.LAZY)
+	@ManyToMany(fetch = FetchType.LAZY,cascade ={
+			CascadeType.PERSIST,
+			CascadeType.MERGE
+	})
 	@JoinTable(	name = "movie_genres",
 			joinColumns = @JoinColumn(name = "movie_id"),
 			inverseJoinColumns = @JoinColumn(name = "genre_id"))
@@ -60,4 +60,31 @@ public class Movie {
 		this.character.add(character);
 	}
 
+	public Movie() {
+	}
+
+	public Movie(Long id, String img, String title, EType type, Date creationDate, Integer rating, List<Character> character, Set<Genre> genres) {
+		this.id = id;
+		this.img = img;
+		this.title = title;
+		this.type = type;
+		this.creationDate = creationDate;
+		this.rating = rating;
+		this.character = character;
+		this.genres = genres;
+	}
+
+	@Override
+	public String toString() {
+		return "Movie{" +
+				"id=" + getId() +
+				", img='" + getImg() + '\'' +
+				", title='" + getTitle() + '\'' +
+				", type=" + getType() +
+				", creationDate=" + getCreationDate() +
+				", rating=" + getRating() +
+				", character=" + getCharacter() +
+				", genres=" + getGenres() +
+				'}';
+	}
 }
