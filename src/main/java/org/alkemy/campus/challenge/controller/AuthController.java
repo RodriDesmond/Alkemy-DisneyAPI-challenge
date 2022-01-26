@@ -1,5 +1,6 @@
 package org.alkemy.campus.challenge.controller;
 
+import java.io.IOException;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -18,6 +19,7 @@ import org.alkemy.campus.challenge.repository.RoleRepository;
 import org.alkemy.campus.challenge.repository.UserRepository;
 import org.alkemy.campus.challenge.security.jwt.JwtUtils;
 import org.alkemy.campus.challenge.security.services.UserDetailsImpl;
+import org.alkemy.campus.challenge.services.EmailService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -50,6 +52,10 @@ public class AuthController {
 	@Autowired
 	JwtUtils jwtUtils;
 
+	@Autowired
+	EmailService emailService;
+
+
 	@PostMapping("/login")
 	public ResponseEntity<?> authenticateUser(@Valid @RequestBody LoginRequest loginRequest) {
 
@@ -72,7 +78,7 @@ public class AuthController {
 	}
 
 	@PostMapping("/register")
-	public ResponseEntity<?> registerUser(@Valid @RequestBody SignupRequest signUpRequest) {
+	public ResponseEntity<?> registerUser(@Valid @RequestBody SignupRequest signUpRequest) throws IOException {
 		if (userRepository.existsByUsername(signUpRequest.getUsername())) {
 			return ResponseEntity
 					.badRequest()
@@ -122,7 +128,7 @@ public class AuthController {
 
 		user.setRoles(roles);
 		userRepository.save(user);
-
+		emailService.sendTextEmail(user.getEmail());
 		return ResponseEntity.ok(new MessageResponse("User registered successfully!"));
 	}
 }
