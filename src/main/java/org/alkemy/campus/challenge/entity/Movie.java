@@ -7,6 +7,7 @@ import lombok.Setter;
 import javax.persistence.*;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
+import javax.validation.constraints.NotNull;
 import java.util.*;
 
 @Entity
@@ -22,8 +23,11 @@ public class Movie {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 
+	@NotNull
 	private String img;
+	@NotNull
 	private String title;
+
 	@Enumerated(EnumType.STRING)
 	private EType type;
 
@@ -44,26 +48,32 @@ public class Movie {
 	private List<Character> character = new ArrayList<>();;
 
 
+	@JoinTable(	name = "genre_movie",
+			joinColumns = @JoinColumn(name = "id_movie", nullable = false),
+			inverseJoinColumns = @JoinColumn(name = "id_genre", nullable = false))
 	@ManyToMany(fetch = FetchType.LAZY,cascade ={
 			CascadeType.PERSIST,
 			CascadeType.MERGE
 	})
-	@JoinTable(	name = "movie_genres",
-			joinColumns = @JoinColumn(name = "movie_id"),
-			inverseJoinColumns = @JoinColumn(name = "genre_id"))
-	private Set<Genre> genres = new HashSet<>();
+	private List<Genre> genre = new ArrayList<>();
 
-		public void addCharacter(Character character){
+	public void addCharacter(Character character){
 		if(this.character == null){
 			this.character = new ArrayList<>();
 		}
 		this.character.add(character);
 	}
 
+	public void addGenre(Genre genre){
+		if(this.genre == null){
+			this.genre = new ArrayList<>();
+		}
+		this.genre.add(genre);
+	}
 	public Movie() {
 	}
 
-	public Movie(Long id, String img, String title, EType type, Date creationDate, Integer rating, List<Character> character, Set<Genre> genres) {
+	public Movie(Long id, String img, String title, EType type, Date creationDate, Integer rating, List<Character> character, List<Genre> genre) {
 		this.id = id;
 		this.img = img;
 		this.title = title;
@@ -71,7 +81,7 @@ public class Movie {
 		this.creationDate = creationDate;
 		this.rating = rating;
 		this.character = character;
-		this.genres = genres;
+		this.genre = genre;
 	}
 
 	@Override
@@ -84,7 +94,7 @@ public class Movie {
 				", creationDate=" + getCreationDate() +
 				", rating=" + getRating() +
 				", character=" + getCharacter() +
-				", genres=" + getGenres() +
+				", genre=" + getGenre() +
 				'}';
 	}
 }

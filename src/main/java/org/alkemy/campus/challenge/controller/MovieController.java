@@ -35,7 +35,7 @@ public class MovieController {
 	public ResponseEntity<?> listCharacter(
 			@RequestParam(name = "order", required = false) String order,
 			@RequestParam(name = "name", required = false) String name,
-			@RequestParam(name = "genre", required = false) Integer idGenre
+			@RequestParam(name = "genre", required = false) Long idGenre
 	){
 		List<Movie> movie = movieRepository.findAll();
 		SimpleBeanPropertyFilter filter = SimpleBeanPropertyFilter.filterOutAllExcept("title","img");

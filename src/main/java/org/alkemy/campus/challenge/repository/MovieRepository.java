@@ -11,6 +11,6 @@ public interface MovieRepository extends JpaRepository<Movie, Long> {
 	Movie findByTitle(String name);
 	List<Movie> findAllByOrderByTitleAsc();
 	List<Movie> findAllByOrderByTitleDesc();
-	@Query("SELECT m FROM Movie m join fetch m.genres g WHERE g.id = :idGenre")
-	List<Movie> findByGenreId(@Param("idGenre")Integer idGenre);
+	@Query("SELECT m FROM Movie m join fetch m.genre g WHERE g.id = :idGenre")
+	List<Movie> findByGenreId(@Param("idGenre")Long idGenre);
 }

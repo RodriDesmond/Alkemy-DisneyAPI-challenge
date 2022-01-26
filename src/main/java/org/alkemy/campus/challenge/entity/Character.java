@@ -5,6 +5,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
 import java.util.List;
 
 @Entity
@@ -19,11 +20,15 @@ public class Character {
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	private Long id;
-
+	@NotNull
 	private String img;
+	@NotNull
 	private String name;
+
 	private Integer age;
 	private Float weight;
+
+	@NotNull
 	private String story;
 
 	@ManyToMany(mappedBy = "character", fetch = FetchType.EAGER, cascade = CascadeType.ALL)

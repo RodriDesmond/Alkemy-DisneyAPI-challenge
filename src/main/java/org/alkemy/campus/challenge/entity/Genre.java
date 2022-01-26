@@ -11,7 +11,7 @@ import java.util.List;
 @Getter
 @Setter
 @RequiredArgsConstructor
-@Table(name = "genre",
+@Table(name = "genres",
 		uniqueConstraints = {
 				@UniqueConstraint(columnNames = "name"),
 				@UniqueConstraint(columnNames = "img")
@@ -19,15 +19,25 @@ import java.util.List;
 public class Genre {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	@JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
-	private Integer id;
+	private Long id;
 
 	private String img;
 
 	@Enumerated(EnumType.STRING)
+	@Column(unique = true)
 	private EGenres name;
 
-	@ManyToMany(mappedBy = "genres")
+	@ManyToMany(mappedBy = "genre", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
 	@JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
 	private List<Movie> movies;
+
+	@Override
+	public String toString() {
+		return "Genre{" +
+				"id=" + getId() +
+				", img='" + getImg() + '\'' +
+				", name=" + getName() +
+				", movies=" + getMovies() +
+				'}';
+	}
 }
