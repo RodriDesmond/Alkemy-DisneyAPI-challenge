@@ -1,15 +1,13 @@
 package org.alkemy.campus.challenge.entity;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import lombok.Getter;
+import lombok.Data;
 import lombok.RequiredArgsConstructor;
-import lombok.Setter;
 
 import javax.persistence.*;
 import java.util.List;
 
 @Entity
-@Getter
-@Setter
+@Data
 @RequiredArgsConstructor
 @Table(name = "genres",
 		uniqueConstraints = {
@@ -30,14 +28,4 @@ public class Genre {
 	@ManyToMany(mappedBy = "genre", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
 	@JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
 	private List<Movie> movies;
-
-	@Override
-	public String toString() {
-		return "Genre{" +
-				"id=" + getId() +
-				", img='" + getImg() + '\'' +
-				", name=" + getName() +
-				", movies=" + getMovies() +
-				'}';
-	}
 }

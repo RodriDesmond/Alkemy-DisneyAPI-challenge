@@ -1,6 +1,10 @@
 package org.alkemy.campus.challenge.entity;
 
+import lombok.AllArgsConstructor;
+import lombok.Data;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 
 import java.util.HashSet;
@@ -12,8 +16,9 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
 
 @Entity
-@Getter
-@Setter
+@Data
+@NoArgsConstructor
+@RequiredArgsConstructor
 @Table(	name = "users",
 		uniqueConstraints = {
 				@UniqueConstraint(columnNames = "username"),
@@ -43,12 +48,6 @@ public class User {
 			inverseJoinColumns = @JoinColumn(name = "role_id"))
 	private Set<Role> roles = new HashSet<>();
 
-	public User() {
-	}
-
-	public User(String username, String email, String password) {
-		this.username = username;
-		this.email = email;
-		this.password = password;
+	public User(String username, String email, String encode) {
 	}
 }

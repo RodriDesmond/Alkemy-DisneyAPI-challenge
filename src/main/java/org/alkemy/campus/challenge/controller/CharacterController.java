@@ -4,12 +4,12 @@ import com.fasterxml.jackson.databind.ser.FilterProvider;
 import com.fasterxml.jackson.databind.ser.impl.SimpleBeanPropertyFilter;
 import com.fasterxml.jackson.databind.ser.impl.SimpleFilterProvider;
 import org.alkemy.campus.challenge.dto.CharacterToMovieDto;
+import org.alkemy.campus.challenge.dto.CharacterUpdateDto;
 import org.alkemy.campus.challenge.entity.Character;
 import org.alkemy.campus.challenge.exception.CharacterNotFoundException;
 import org.alkemy.campus.challenge.repository.CharacterRepository;
 import org.alkemy.campus.challenge.repository.MovieRepository;
 import org.alkemy.campus.challenge.services.CharacterService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.json.MappingJacksonValue;
@@ -28,12 +28,17 @@ import java.util.Objects;
 @RequestMapping("/characters")
 public class CharacterController {
 
-	@Autowired
-	private CharacterService characterService;
-	@Autowired
-	private CharacterRepository characterRepository;
-	@Autowired
-	private MovieRepository movieRepository;
+	private final CharacterService characterService;
+	private final CharacterRepository characterRepository;
+	private final MovieRepository movieRepository;
+
+	public CharacterController(CharacterService characterService,
+	                           CharacterRepository characterRepository,
+	                           MovieRepository movieRepository) {
+		this.characterService = characterService;
+		this.characterRepository = characterRepository;
+		this.movieRepository = movieRepository;
+	}
 
 	@GetMapping
 	public ResponseEntity<?> listCharacter(
@@ -42,23 +47,23 @@ public class CharacterController {
 			@RequestParam(name = "idMovie", required = false) Long idMovie
 	){
 		List<Character> character = characterRepository.findAll();
+
 		SimpleBeanPropertyFilter characterFilter = SimpleBeanPropertyFilter.filterOutAllExcept("name","img");
 		FilterProvider filters = new SimpleFilterProvider()
 				.addFilter("Details", characterFilter);
 		MappingJacksonValue mapping = new MappingJacksonValue(character);
 		mapping.setFilters(filters);
 		if(age != null){
-			return new ResponseEntity<>(characterRepository.findByAge(age), HttpStatus.OK);
+			return new ResponseEntity<>(characterService.findByAge(age), HttpStatus.OK);
 		} else if (Objects.nonNull(name)) {
-			return new ResponseEntity<>(characterRepository.findByName(name), HttpStatus.OK);
+			return new ResponseEntity<>(characterService.findByName(name), HttpStatus.OK);
 		} else if (Objects.nonNull(idMovie)) {
-		return new ResponseEntity<>(characterRepository.findByMovieId(idMovie), HttpStatus.OK);
+		return new ResponseEntity<>(characterService.findByMovieId(idMovie), HttpStatus.OK);
 	}
 		return new ResponseEntity<>(mapping, HttpStatus.OK);
 	}
 	@PostMapping()
 	public Character save(@RequestParam("file") MultipartFile image, @ModelAttribute Character character){
-
 		if(!image.isEmpty()){
 
 			Path imagesPath = Paths.get("src//main//resources//static//images//characters");
@@ -83,8 +88,8 @@ public class CharacterController {
 	}
 
 	@PutMapping("{id}")
-	public Character updateCharacter(@PathVariable Long id, @RequestBody Character character){
-		return this.characterService.updatePersonaje(id, character);
+	public CharacterUpdateDto updateCharacter(@PathVariable Long id, @RequestBody CharacterUpdateDto character){
+		return this.characterService.updateCharacter(id, character);
 	}
 
 	@DeleteMapping("{id}")

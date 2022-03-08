@@ -3,7 +3,6 @@ package org.alkemy.campus.challenge.controller;
 import com.fasterxml.jackson.databind.ser.FilterProvider;
 import com.fasterxml.jackson.databind.ser.impl.SimpleBeanPropertyFilter;
 import com.fasterxml.jackson.databind.ser.impl.SimpleFilterProvider;
-import org.alkemy.campus.challenge.entity.Character;
 import org.alkemy.campus.challenge.entity.Movie;
 import org.alkemy.campus.challenge.exception.MovieNotFoundException;
 import org.alkemy.campus.challenge.repository.MovieRepository;
@@ -86,7 +85,7 @@ public class MovieController {
 	public Movie updateMovie(@PathVariable Long id, @RequestBody Movie movie){
 		return this.movieService.updateMovie(id, movie);
 	}
-	
+
 	@DeleteMapping("{id}")
 	@ResponseStatus( HttpStatus.NO_CONTENT)
 	public void removeCharacter(@PathVariable Long id){
